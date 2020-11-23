@@ -57,7 +57,7 @@ app.post('/animals', (req, res) =>{
 //delete animal route
 app.delete('/animals', (req, res) =>{
 
-    console.log('Animals router to delete shoes');
+    console.log('Animals router to delete animals');
     //Find the animal data who has the id
     animalsDb.deleteOne({"_id": ObjectId(req.body.id)})
 
@@ -137,7 +137,7 @@ run().catch(console.dir);
 
 class Animals {
 
-    constructor(name, size, numberOfLegs, color, species, availability = false) {
+    constructor(name, size, color, species, availability = false) {
         this.name = name;
         this.size = size;
         this.color = color;
