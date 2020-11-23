@@ -54,7 +54,7 @@ app.post('/animals', (req, res) =>{
 
 })
 
-
+//delete animal route
 app.delete('/animals', (req, res) =>{
 
     console.log('Animals router to delete shoes');
@@ -73,6 +73,7 @@ app.delete('/animals', (req, res) =>{
     findAnimals();
 })
 
+//put animal route
 app.put('/animals', (req, res) => {
     console.log(' Animals router for update ');
     async function findAnimals() {
