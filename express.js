@@ -45,59 +45,62 @@ app.get('/animals/:id', (req, res) => {
 
 //post animal route
 app.post('/animals', (req, res) =>{
-    console.log('I have received a post request in the /animal route');
-    //create a animals object
-    let animals = new Animals(req.body.name, req.body.size, req.body.numberOfLegs, req.body.color, req.body.species, req.body.birth)
-    //insert the new object into to the database
-    animalsDb.insertOne(animals)
+    console.log('I have received a post request in the /animals route');
+    //create a new animal object
+    let animal = new Animals(req.body.name, req.body.size, req.body.color, req.body.species, req.body.availability)
+    //insert the new object to the database
+    animalsDb.insertOne(animal)
     res.sendStatus(200)
+
 })
 
 
-// Animals router to delete
 app.delete('/animals', (req, res) =>{
 
-    console.log('Animals router to delete animals');
-
+    console.log('Animals router to delete shoes');
+    //Find the animal data who has the id
     animalsDb.deleteOne({"_id": ObjectId(req.body.id)})
 
-    //find the animal by id 
     async function findAnimals() {
         const foundAnimals = await  animalsDb.findOne({"_id": ObjectId(req.body.id)})
-
-        // send a message to the user if is was not working
+        // send a message to the user if the delete didn't work
         if(foundAnimals !== null){
             res.send("The entry was not deleted")
         }
-        //// send a message to the user if is was working
+        //// send a message to the user if the delete work
         res.send("The entry was deleted")
     }
     findAnimals();
 })
 
-// Animals router for the update
 app.put('/animals', (req, res) => {
     console.log(' Animals router for update ');
     async function findAnimals() {
         try{
+            //find the animals data who has the same id
             const foundAnimals = await  animalsDb.findOne({"_id": ObjectId(req.body.id)})
-            
-            //if the animals is found edit it and send a message to the user
-                if(foundAnimals !== null){
-                    let animals = new Animals(foundAnimals.name, foundAnimals.size, foundAnimals.numberOfLegs, foundAnimals.color, foundAnimals.species, foundAnimals.birth)
+            if(foundAnimals !== null){
+                //Create the new animals object for update
+                let animal = new Animals(foundAnimals.name, foundAnimals.size, foundAnimals.color, foundAnimals.species, foundAnimals.availability)
 
-                    animals.name = req.body.name;
+                animal.name = req.body.name;
+                animal.size = req.body.size;
+                animal.color = req.body.color;
+                animal.species = req.body.species;
+                animal.availability = req.body.availability;
+
 
                 try{
                     await animalsDb.updateOne(
                         {"_id": ObjectId(req.body.id)},
-                        {$set:animals});
+                        {$set:animal});
                 } catch(err){
                     console.log(err.stack)
                 }
+                // send a message to the user if the update work
                 res.send("The animals were updated");
             } else {
-                //if the animals is not found send a message to the user saying that this entry doe not exist
+                //if the animals are not found send a message to the user saying that this entry doe not exist
                 res.send("The animals were not updated");
             }}catch(err){
             res.send("Object id is invalid")
@@ -133,16 +136,12 @@ run().catch(console.dir);
 
 class Animals {
 
-    constructor(name, size, numberOfLegs, color, species, birth) {
+    constructor(name, size, numberOfLegs, color, species, availability = false) {
         this.name = name;
         this.size = size;
-        this.numberOfLegs = numberOfLegs;
         this.color = color;
         this.species = species;
-        this.birth = birth;
+        this.availability = availability
     }
 
-    printValues(){
-        console.log(this.name, this.size, this.numberOfLegs, this.color, this.species, this.birth);
-    }
 }
